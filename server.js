@@ -1,4 +1,20 @@
+const http = require('http')
+const fs = require('fs')
+
 const io = require('socket.io')(3000)
+  
+http.createServer((req, res) => {
+  const filePath = __dirname + (req.url === '/' ? '/index.html' : req.url)
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404)
+      res.end(JSON.stringify(err))
+      return
+    }
+    res.writeHead(200)
+    res.end(data)
+  })
+}).listen(io)
 
 io.on('connection', socket => {
 	socket.on('new-user', name => {
